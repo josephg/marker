@@ -1,0 +1,17 @@
+extends layout
+
+mixin field(k, v)
+  p
+    b=k
+    | : #{v}
+
+block content
+  a(href='javascript:window.history.back()')
+    << Back
+  h1 Got your submission for question #{num}
+  mixin field("Filename", name)
+  mixin field("User", user)
+  mixin field("Time", (new Date()).toTimeString())
+  mixin field("ID", id)
+  br
+

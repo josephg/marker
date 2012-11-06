@@ -1,0 +1,7 @@
+log.txt
+submissions
+temp
+uploads
+*.swp
+*.DS_Store
+node_modules

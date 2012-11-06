@@ -1,0 +1,17 @@
+extends layout
+
+mixin foo(q)
+  h2 Question #{q}
+  form(method="post", action="q/#{q}", enctype="multipart/form-data")
+    input(type="file", name="q")
+    input(type="submit")
+
+block content
+  h1 Yo #{user}!
+  p Sup?
+  mixin foo("1")
+  mixin foo("2")
+  mixin foo("3")
+  mixin foo("4")
+  mixin foo("5")
+
