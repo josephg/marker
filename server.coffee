@@ -29,9 +29,21 @@ log 'Server started'
 app.get '/', (req, res) ->
   res.render 'index', user:req.user
 
+testArgs =
+  1: ["6"]
+
+input =
+  2: "2\nasdf\nasdf\n"
+
 expectedOutput =
+  1: "true"
+  2: """Enter n: Start entering strings
+    1 different strings seen."""
   4: """Testing 6 4 3 converges
 Testing 1 2 4 does not converge"""
+
+additionalCFlags =
+  4: "../../q/4.c"
 
 app.post '/q/:num', (req, res, next) ->
   unless req.files?.q and req.files.q.size > 0
@@ -67,7 +79,8 @@ app.post '/q/:num', (req, res, next) ->
 
       cp = childprocess.spawn 'cp', [f.path, "#{dir}/#{f.name}"]
       cp.on 'exit', ->
-        args = ['-xc++', '-Wall', '-Werror', '-o', 'output', f.name, "../../q/#{num}.c"]
+        args = ['-xc++', '-Wall', '-Werror', '-o', 'output', '-g', f.name]
+        args.push additionalCFlags[num] if additionalCFlags[num]
         res.write "Compiling...\n"
         res.write "% clang #{args.join ' '}\n"
         cp = childprocess.spawn 'clang', args, cwd:dir
@@ -76,25 +89,37 @@ app.post '/q/:num', (req, res, next) ->
         cp.on 'exit', (code) ->
           return unless code is 0
           res.write "\nCompilation successful. Running smoke test...\n"
-          res.write "% ./output\n"
-          cp = childprocess.spawn './output', [], cwd:dir
+          res.write "(Input: '#{input[num]}')\n\n" if input[num]
+          res.write "% ./output #{testArgs[num]?.join(' ') or ''}\n"
+          cp = childprocess.spawn './output', testArgs[num] or [], cwd:dir
+          cp.stdin.end input[num] if input[num]
+          
+          timeout = setTimeout ->
+              cp.kill()
+              res.write "\nYour program was too slow. I think it had locked up. Killed the bitch.\n"
+            , 5000
 
           out = []
           cp.stdout.on 'data', (data) ->
             res.write data.toString()
             out.push data.toString()
+            if out.length > 100
+              cp.kill()
+              res.write "\nUgh so spammy. Killed.\n"
           cp.stderr.on 'data', (data) -> res.write data.toString()
           cp.on 'exit', (code) ->
             res.write "\nExit code: #{code}\n</pre>"
+            clearTimeout timeout
 
-            if out.join('').trim() is expectedOutput[num].trim()
-              res.write "<h1>Test passed</h1>"
+            expected = expectedOutput[num]?.trim()
+            if code != null and out.length and (!expected or out.join('').trim() is expected)
+              res.write "<h1>Boring Test passed - Submission accepted!</h1>"
               res.write """
 <p>Super simple tests passed. But you should run your own tests as well, just in case.
 I'm going to be running more tests when I mark for reals.</p>"""
             else
               res.write "<br><h1>FAIL!</h1>"
-              res.write "Expected: <pre>#{expectedOutput[num]}</pre>"
+              res.write "Expected: <pre>#{expected}</pre>" if expected
             res.end()
 
     catch e
