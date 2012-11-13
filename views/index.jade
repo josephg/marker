@@ -1,17 +1,223 @@
 extends layout
 
-mixin foo(q)
-  h2 Question #{q}
+mixin q(q)
+  h4 Submission status: !{data[q] && data[q].status || "No submission"}
   form(method="post", action="q/#{q}", enctype="multipart/form-data")
     input(type="file", name="q")
     input(type="submit")
+  hr
 
 block content
-  h1 Yo #{user}!
-  p Sup?
-  mixin foo("1")
-  mixin foo("2")
-  mixin foo("3")
-  mixin foo("4")
-  mixin foo("5")
+  h1 2012 Year 1 AIE Programming Quiz
+  h3 Yo #{user}!
+  p.
+    You have <b>2 hours</b> to do <b>5 programming questions</b>.
+    Each question is worth <b>5 marks</b>, from <b>5 test cases per question</b>.
+    Good luck, and may the force be with you.
+  p.
+    Your answers to these questions will be automarked. That means, your output
+    must EXACTLY MATCH mine. One little typo in your <code>printf</code> statement
+    can make all the tests will fail and <b>you will get 0</b> for the question. Likewise, a
+    single system(“pause”) at the end of your program will cause the tests to 
+    fail and you will get 0.
+
+  p.
+    For really stupid mistakes, you can appeal and I can fix your code - but I am
+    lazy and vindictive. You will lose 1 mark for being bothersome.
+
+  p.
+    Each example program output starts with <code>&gt; foo.exe</code>. This is an indication of how
+    the program would be run from the command line. You don't have to print that out or anything.
+
+  p
+    | Whenever examples are given below, input to your program will be red (
+    span.in 1 2 3
+    | ), and what your program should output will be black. (1 2 3)
+
+  p.
+    The answer to each question needs to be in its own <code>.c</code> or <code>.cpp</code> file.
+    You can only submit one file for each question. You can submit as many times as you want,
+    but only the final submission for each question counts.
+
+  p There are 3 bonus marks available. Get your standard 25 marks before attempting them.
+
+  p <b>READ ALL THE QUESTIONS BEFORE YOU START</b>. Especially question 5.
+
+  p.
+    All programs must compile with no errors and no warnings. You have access to the standard
+    math library and STL.
+    Don’t stress - when you submit, you are told immediately if your program doesn’t compile.
+
+  p.
+    You need to <b>test your own program</b>. A simple test is run when you submit your answer, but
+    that is only 1 of the 5 tests your program will be subjected to by the marking system. <b>BE
+    AFRAID.</b>
+
+
+  h2 Example code
+  p These questions require reading numbers in from the console and from command-line arguments.
+  p Here’s an example program that reads a number in from the console:
+  pre.
+    #include <stdio.h>
+    int main()
+    {
+      int x;
+      scanf("%d", &x);
+      printf("The number was %d\n", x);
+      return 0;
+    }
+
+  p Here’s an example program which reads numbers in from the command-line:
+  pre.
+    #include <stdio.h>
+    int main(int argc, char *argv[])
+    {
+      printf("Your program has %d command-line arguments\n", argc - 1);
+      for (int i = 1; i < argc; i++)
+      {
+        int x;
+        sscanf(argv[i], "%d", &x);
+        printf("Argument %d is %d\n", i, x);
+      }
+      return 0;
+    }
+  
+  hr
+
+  h1 Question 1
+
+  p
+    | Write a program which reads in 2 integers (width and height) and
+    | prints a box made of <code>+</code> characters of the specified size.
+
+  p Eg:
+
+  pre
+    | > q1.exe
+    | 
+    span.in 3 2
+    | 
+    | +++
+    | +++
+
+  p You can assume the width and height will both be positive integers.
+
+  mixin q("1")
+
+
+  h1 Question 2
+
+  p The average (mean) of a group of N numbers a, b, c, … is (a + b + c + ...) / N.
+
+  p Player's score is stored in a linked list represented using this struct:
+
+  pre.
+    struct Node
+    {
+      int data;
+      Node *next;
+    };
+
+  p.
+    Copy-paste the struct definition (above) into your C/C++ file and write a function
+    to calculate and return the average of the numbers. Your function must have the signature:
+
+  pre float average(Node *first);
+
+  p You can assume the list has at least one element in it.
+  p The last node in the list points to NULL.
+  p Your submitted function must not print anything out.
+
+  mixin q("2")
+
+  
+  h1 Question 3
+
+  p.
+    A stick lies flat on a table from point A to point B. Atanas holds the A end of the
+    stick and rotates the stick 30 degrees anticlockwise. Write a program that finds out
+    where B is now.
+
+  p
+    | Your program should read in 4 numbers (a.x, a.y, b.x, b.y) and then print out the
+    | new coordinates of B. The output should be printed with 2 decimal points of precision (
+    code %.2f
+    | ).
+
+  p Eg:
+  pre
+    | > q3.exe
+    | 
+    span.in 100 1000 110 1000
+    | 
+    | 105.00 1008.66
+
+  p You can use matricies if you want, but you don’t need them to answer this question.
+
+  p <b>1 bonus mark</b> will be awarded if your program does not call any functions in <code>math.h</code>
+
+  mixin q("3")
+
+
+  h1 Question 4
+
+  p.
+    Write a C++ program that can multiply 2 nonnegative integers together, without using
+    the +, *, += or *= operators. You may use ++.
+
+  p The numbers are passed in as program arguments (using <code>argc</code> and <code>argv</code>).
+
+  p Eg:
+  pre
+    | > q4.exe 
+    span.in 4 10
+    | 
+    | 40
+
+  p Your program will always get 2 arguments on the command line.
+
+  p <b>1 bonus mark</b> will be awarded you solve this problem without using the <code>++</code> operator
+
+  mixin q("4")
+
+
+  h1 Question 5
+
+  p
+  | Your program is given a list of integers on the command line (through argc & argv).
+  | You have to find a set of integers in the list which adds up to 21.
+
+  p Eg:
+  pre
+    | > q5.exe 
+    span.in 5 5 5 5 5 5 5 5 5 1
+    | 
+    | 5 + 5 + 5 + 5 + 1 = 21
+
+  pre
+    | > q5.exe 
+    span.in 9 13 -1 -10
+    | 
+    | 9 + 13 + -1 = 21
+
+  p The numbers must be printed out in the same order that they’re given to your program.
+
+  p If no combination of numbers adds to 21, print “No sum adds to 21”:
+
+  pre
+    | > q5.exe 
+    span.in 6 6 1 10
+    | 
+    | No sum adds to 21
+
+
+  p You can assume there are less than 30 numbers given to your program.
+
+  p If there is more than one possible solution, print out any one of the solutions.
+
+  p
+    | <b>1 bonus mark</b> will be given to the fastest correct solution for a large (~30)
+    | number of input values.
+
+  mixin q("5")
 
