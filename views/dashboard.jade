@@ -1,0 +1,30 @@
+extends layout
+
+mixin result(data)
+  - if(data)
+    - if(data.status == 'Passed')
+      td.data.pass #{data.status}
+    - else
+      td.data.fail #{data.status}
+  - else
+    td.data.meh
+
+mixin user(name, data)
+  tr
+    td.name #{name}
+    - for (var i = 1; i <= 5; i++)
+      mixin result(data[i])
+
+block content
+  h1 Dashboard
+
+  table
+    tr
+      th
+      - for (var i = 1; i <= 5; i++)
+        th Q#{i}
+    - for(user in users)
+      mixin user(user, users[user])
+
+  //script
+  //  setTimeout(function() { document.location.reload(true); }, 10000);
