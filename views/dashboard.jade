@@ -18,13 +18,17 @@ mixin user(name, data)
 block content
   h1 Dashboard
 
+  br
+
   table
-    tr
-      th
-      - for (var i = 1; i <= 5; i++)
-        th Q#{i}
-    - for(user in users)
-      mixin user(user, users[user])
+    thead
+      tr
+        th
+        - for (var i = 1; i <= 5; i++)
+          th Q#{i}
+    tbody
+      - for(user in users)
+        mixin user(user, users[user])
 
   //script
   //  setTimeout(function() { document.location.reload(true); }, 10000);
